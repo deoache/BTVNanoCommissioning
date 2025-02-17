@@ -1,5 +1,25 @@
 predefined_sample = {
     ## Commissioning WF
+    "QCD_light_sf": {
+        "data": ["JetMET"],
+        "MC": [
+            #"QCD_PT-15to30_TuneCP5_13p6TeV_pythia8",
+            #"QCD_PT-30to50_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-50to80_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-80to120_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-120to170_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-170to300_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-300to470_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-470to600_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-600to800_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8",
+            "QCD_PT-3200_TuneCP5_13p6TeV_pythia8",
+        ]
+    },
     "QCD_sf": {
         "data": ["JetMET0", "JetMET1"],
         "MC": [
