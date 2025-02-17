@@ -1,5 +1,5 @@
 {
-    "JetMETC": [
+    "JetMETRun2022C22Sep2023-v1": [
         "root://cmseos.fnal.gov//eos/uscms/store/data/Run2022C/JetMET/NANOAOD/22Sep2023-v1/2530000/0b6815d2-5fd6-4b55-9374-a32b052c129b.root",
         "root://t3se01.psi.ch:1094//store/data/Run2022C/JetMET/NANOAOD/22Sep2023-v1/2530000/27f35e3e-ceb0-4707-98fd-65e35243d747.root",
         "root://cmsdcache-kit-disk.gridka.de:1094//store/data/Run2022C/JetMET/NANOAOD/22Sep2023-v1/2530000/e4bb6e09-af8e-4b2a-8f9e-5a3b72de50ab.root",
@@ -207,7 +207,7 @@
         "root://lcgsedr01.jinr.ru:1094//pnfs/jinr.ru/data/cms/store/data/Run2022C/JetMET/NANOAOD/22Sep2023-v1/50000/f50f5af4-d772-4331-befc-3ff05a109bbf.root",
         "root://xrootd-local.unl.edu:1094//store/data/Run2022C/JetMET/NANOAOD/22Sep2023-v1/50000/fbfb2d7b-ae12-4a3c-8baf-4699ccebb040.root"
     ],
-    "JetMETD": [
+    "JetMETRun2022D22Sep2023-v1": [
         "root://xrootd-local.unl.edu:1094//store/data/Run2022D/JetMET/NANOAOD/22Sep2023-v1/2550000/03b788ce-72e2-4602-982a-7d042081ab89.root",
         "root://gaexrdoor.ciemat.es:1094//store/data/Run2022D/JetMET/NANOAOD/22Sep2023-v1/2550000/0671d882-68d5-4e22-acf2-788dbe3b20c7.root",
         "root://gaexrdoor.ciemat.es:1094//store/data/Run2022D/JetMET/NANOAOD/22Sep2023-v1/2550000/09bd0d81-c724-4762-abbd-3ebe89f0bbca.root",

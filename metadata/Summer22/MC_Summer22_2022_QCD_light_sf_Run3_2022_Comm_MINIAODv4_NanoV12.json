@@ -1,5 +1,5 @@
 {
-    "QCD_1000to1400": [
+    "QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8": [
         "root://eoscms.cern.ch//eos/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/617797fd-229c-4a4f-8f5e-daf1061496fe.root",
         "root://rdr.echo.stfc.ac.uk//store/mc/Run3Summer22NanoAODv12/QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/96fc0398-681a-47c6-9a6f-711debb1d970.root",
         "root://rdr.echo.stfc.ac.uk//store/mc/Run3Summer22NanoAODv12/QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/71405b0e-92d5-49c5-9b7c-0d9043adea5a.root",
@@ -30,7 +30,7 @@
         "root://rdr.echo.stfc.ac.uk//store/mc/Run3Summer22NanoAODv12/QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/a6deba9b-1510-4703-8417-c6e6b370b4fd.root",
         "root://rdr.echo.stfc.ac.uk//store/mc/Run3Summer22NanoAODv12/QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/bf7b9e69-1117-4f9d-a9f0-31ba1638f9c7.root"
     ],
-    "QCD_120to170": [
+    "QCD_PT-120to170_TuneCP5_13p6TeV_pythia8": [
         "root://cmsdcadisk.fnal.gov//dcache/uscmsdisk/store/mc/Run3Summer22NanoAODv12/QCD_PT-120to170_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/c5e16dc8-df0a-47e1-929d-49299e2bfda3.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-120to170_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/db56f992-b742-41de-a453-6c3cd8d35f1b.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-120to170_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2540000/361f32c9-e21f-44f0-a972-ced85d66d2e2.root",
@@ -43,14 +43,14 @@
         "root://gfe02.grid.hep.ph.ic.ac.uk:1094//pnfs/hep.ph.ic.ac.uk/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-120to170_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/431a8f7f-3661-4d90-937e-0206f9971761.root",
         "root://lcgsedr01.jinr.ru:1094//pnfs/jinr.ru/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-120to170_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/c6024359-88a4-4c36-b53a-6d855c67447a.root"
     ],
-    "QCD_1400to1800": [
+    "QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8": [
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/466990a4-8bc9-4d15-9a82-db0a2b81d36d.root",
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/12e2ce8b-6a84-43a3-a933-80f4e85acc2c.root",
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/168c20bd-0426-4f5f-8db3-7b9eef78f881.root",
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/a665c486-f3b1-4fda-9e4f-67d8915756e8.root",
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-1400to1800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/b08679d8-666f-4f00-8fc5-bae2f489d3d3.root"
     ],
-    "QCD_170to300": [
+    "QCD_PT-170to300_TuneCP5_13p6TeV_pythia8": [
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-170to300_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/4098c8a7-218f-4358-81d9-4c2c3836d076.root",
         "root://lcgsedr01.jinr.ru:1094//pnfs/jinr.ru/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-170to300_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/6fad8f12-85b6-4f55-9b26-f38dfd400e88.root",
         "root://lcgsedr01.jinr.ru:1094//pnfs/jinr.ru/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-170to300_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2540000/0033221f-0baa-4d00-90fc-0648ad05ab71.root",
@@ -64,7 +64,7 @@
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-170to300_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/34a65c63-3034-4944-8337-a8564a45088d.root",
         "root://dcache-cms-xrootd.desy.de:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-170to300_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/6a0b0d7c-dde1-47db-bafb-c30467e2f171.root"
     ],
-    "QCD_1800to2400": [
+    "QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8": [
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/42fcaaae-0cb9-41ea-bead-5e9e169ec89c.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/d0667fef-4354-4463-a63a-eae479e3d98f.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/264c3de5-9726-4370-b3ef-aa57f8680506.root",
@@ -75,14 +75,14 @@
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/33769ee2-7998-4eab-964a-d3c9ccc37eb9.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-1800to2400_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/470bddc6-da0a-45f0-8c09-1ee6d30e95a4.root"
     ],
-    "QCD_2400to3200": [
+    "QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8": [
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/f99acaf1-d006-4944-a706-a179ec235c5a.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/023196e2-ad9d-4d5b-be7a-9471ad9435f3.root",
         "root://xrootd-local.unl.edu:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/1cb6aaba-9008-4270-847b-fd14526d57b7.root",
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/40000/129dd60a-dd7d-44ef-844e-5cb97e7a25fa.root",
         "root://xrootd-local.unl.edu:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-2400to3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/457810f0-368e-472b-ba8f-f626512648cf.root"
     ],
-    "QCD_300to470": [
+    "QCD_PT-300to470_TuneCP5_13p6TeV_pythia8": [
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-300to470_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/aae55136-76c5-4f5e-a7d2-e2a367619af0.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-300to470_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2540000/07efcea3-2e13-401b-a288-19fd6aae5d0f.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-300to470_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2540000/b0dd14c4-4910-4055-874a-2776cec97064.root",
@@ -99,7 +99,7 @@
         "root://grid143.kfki.hu:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-300to470_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/60000/d1e6db07-9fb3-40d5-8d5d-4a523e4c55b5.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-300to470_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/620000/d3709c8c-2a78-42a2-8e8f-62874c256c66.root"
     ],
-    "QCD_3200": [
+    "QCD_PT-3200_TuneCP5_13p6TeV_pythia8": [
         "root://xrootd-redir1-vanderbilt.sites.opensciencegrid.org:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/34acdd4c-28cf-48df-a0bb-03cbe465514d.root",
         "root://xrootd-redir1-vanderbilt.sites.opensciencegrid.org:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2540000/05e4acf1-507a-4d01-a8b8-63c23fe88a92.root",
         "root://ccxrdcms.in2p3.fr:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/7cbd59c1-75a5-487b-91bc-5a68e4834172.root",
@@ -107,7 +107,7 @@
         "root://grid143.kfki.hu:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/40000/0508a3de-da61-4bfa-811c-7e1c87ec3f7e.root",
         "root://gaexrdoor.ciemat.es:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-3200_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/40000/43533f91-27b1-4738-ad75-34f17c80a66d.root"
     ],
-    "QCD_470to600": [
+    "QCD_PT-470to600_TuneCP5_13p6TeV_pythia8": [
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-470to600_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/9fd03ff1-edc5-4695-af66-861769923823.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-470to600_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/91d5ebb4-37c0-4cb4-831c-62040edb3d8c.root",
         "root://cmsdcadisk.fnal.gov//dcache/uscmsdisk/store/mc/Run3Summer22NanoAODv12/QCD_PT-470to600_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/bf372c2c-f516-4032-8b0b-51faeaa6424a.root",
@@ -119,7 +119,7 @@
         "root://cmsdcadisk.fnal.gov//dcache/uscmsdisk/store/mc/Run3Summer22NanoAODv12/QCD_PT-470to600_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/443b5f10-c4f1-48b8-8aa1-a894f78855c4.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-470to600_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/b55d23a7-def8-450a-ae6e-71c5cf26d537.root"
     ],
-    "QCD_50to80": [
+    "QCD_PT-50to80_TuneCP5_13p6TeV_pythia8": [
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-50to80_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/492ffb1d-71f1-45f0-a62e-2aaf74d9432a.root",
         "root://cmsdcache-kit-disk.gridka.de:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-50to80_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/0a4cb477-c852-420d-828b-9d6aacd443ba.root",
         "root://cmsdcache-kit-disk.gridka.de:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-50to80_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/0bf29484-55ef-441e-8cb3-6062c681442f.root",
@@ -148,7 +148,7 @@
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-50to80_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/d1050284-ef09-4eb1-8bb9-2487a9d46f35.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-50to80_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/df16df62-8036-4344-851d-c017583816eb.root"
     ],
-    "QCD_600to800": [
+    "QCD_PT-600to800_TuneCP5_13p6TeV_pythia8": [
         "root://xrootd-local.unl.edu:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-600to800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/5cfab27f-f1e3-4dbc-80db-b768f832e26f.root",
         "root://gfe02.grid.hep.ph.ic.ac.uk:1094//pnfs/hep.ph.ic.ac.uk/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-600to800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/d66c0c5d-34de-4a20-b8f9-4877e8568d81.root",
         "root://gfe02.grid.hep.ph.ic.ac.uk:1094//pnfs/hep.ph.ic.ac.uk/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-600to800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2540000/000fc8c4-9714-4048-81a7-5e4311b2ccea.root",
@@ -173,7 +173,7 @@
         "root://lcgsedr01.jinr.ru:1094//pnfs/jinr.ru/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-600to800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/40000/de735682-0857-46e5-8363-6cd5c0544ee4.root",
         "root://gfe02.grid.hep.ph.ic.ac.uk:1094//pnfs/hep.ph.ic.ac.uk/data/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-600to800_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/4ce54615-1560-494a-a4f8-ad1ca56908c7.root"
     ],
-    "QCD_800to1000": [
+    "QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8": [
         "root://cmsdcache-kit-disk.gridka.de:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/02419e50-1ca7-4b0a-99b9-a142b39590fb.root",
         "root://eoscms.cern.ch//eos/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/429ab5d9-5295-41b2-9d53-9536721d884f.root",
         "root://cmsdcache-kit-disk.gridka.de:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/b739c4de-5f38-4540-b2b8-f3d99476b592.root",
@@ -209,7 +209,7 @@
         "root://eoscms.cern.ch//eos/cms/store/mc/Run3Summer22NanoAODv12/QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/c856b52e-401e-451f-b8cd-33b444cb86dd.root",
         "root://cmsdcache-kit-disk.gridka.de:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-800to1000_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/fa7b3044-28a7-45b5-996d-a0c5bff08be8.root"
     ],
-    "QCD_80to120": [
+    "QCD_PT-80to120_TuneCP5_13p6TeV_pythia8": [
         "root://xrootd-local.unl.edu:1094//store/mc/Run3Summer22NanoAODv12/QCD_PT-80to120_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/0ed8b563-72f9-4653-801a-502b49039097.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-80to120_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/538a1adc-fb61-4414-9f28-24adbf8f4ae5.root",
         "root://storage01.lcg.cscs.ch:1096//pnfs/lcg.cscs.ch/cms/trivcat/store/mc/Run3Summer22NanoAODv12/QCD_PT-80to120_TuneCP5_13p6TeV_pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/7285b927-83a6-447b-b646-1ebba9dbdd8e.root",
