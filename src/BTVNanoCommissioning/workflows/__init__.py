@@ -34,6 +34,9 @@ from BTVNanoCommissioning.workflows.QCD_validation import (
 from BTVNanoCommissioning.workflows.QCD_soft_mu_validation import (
     NanoProcessor as QCDsmuValidProcessor,
 )
+from BTVNanoCommissioning.workflows.QCD_light_sf import (
+    NanoProcessor as QCDLightProcessor,
+)
 
 ## BTA - for SFs
 from BTVNanoCommissioning.workflows.BTA_producer import (
@@ -46,6 +49,7 @@ from BTVNanoCommissioning.workflows.BTA_ttbar_producer import (
 # from BTVNanoCommissioning.workflows.example import (
 #     NanoProcessor as ExampleProcessor,
 # )
+
 
 
 # FIXME - make names more systematic?
@@ -78,6 +82,7 @@ workflows["ectag_ttsemilep_sf"] = partial(
 ##QCD
 workflows["QCD_sf"] = QCDValidProcessor
 workflows["QCD_smu_sf"] = QCDsmuValidProcessor
+workflows["QCD_light_sf"] = QCDLightProcessor
 
 # W+c
 workflows["ctag_Wc_sf"] = partial(CTAGWcTTValidSFProcessor, selectionModifier="WcM")
