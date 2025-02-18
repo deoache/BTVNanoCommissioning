@@ -48,14 +48,6 @@ correction_config = {
             "Run2022C": "Summer22_22Sep2023_RunCD_V2",
             "Run2022D": "Summer22_22Sep2023_RunCD_V2",
         },  # update to latest JEC
-        "LSF": {
-            "mu_ID": "NUM_TightID_DEN_TrackerMuons",
-            "mu_Iso": "NUM_TightPFIso_DEN_TightID",
-            "ele_ID 2022Re-recoBCD Electron-ID-SF": "Tight",
-            "ele_Reco_low 2022Re-recoBCD Electron-ID-SF": "RecoBelow20",
-            "ele_Reco_med 2022Re-recoBCD Electron-ID-SF": "Reco20to75",
-            "ele_Reco_high 2022Re-recoBCD Electron-ID-SF": "RecoAbove75",
-        },
         "JPCalib": {
             "Run2022C": "calibeHistoWrite_Data2022C_NANO130X_v1.root",
             "Run2022D": "calibeHistoWrite_Data2022D_NANO130X_v1.root",
