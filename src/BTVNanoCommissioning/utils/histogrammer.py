@@ -57,6 +57,7 @@ def histogrammer(events, workflow, year="2022", campaign="Summer22"):
     ptratio_axis = Hist.axis.Regular(50, 0, 1, name="ratio", label="ratio")
     n_axis = Hist.axis.Integer(0, 10, name="n", label="N obj")
     osss_axis = Hist.axis.IntCategory([1, -1], name="osss", label="OS(+)/SS(-)")
+    
     ## create histograms for each workflow
     ### Workflow specific
     if "example" == workflow:
@@ -67,6 +68,22 @@ def histogrammer(events, workflow, year="2022", campaign="Summer22"):
         _hist_dict[f"dr_mujet0"] = Hist.Hist(
             syst_axis, flav_axis, dr_axis, Hist.storage.Weight()
         )  # create cutstomize histogram
+        
+    elif "QCD_light_sf" == workflow:
+        obj_list = ["jet"]
+        _hist_dict["npvs"] = Hist.Hist(syst_axis, npvs_axis, Hist.storage.Weight())
+        
+        for tagger in ["PNet", "ParT", "DeepFlavour"]:
+            for flavor in ["B", "C"]:
+                _hist_dict[f"{tagger}{flavor}"] = Hist.Hist(
+                    syst_axis, 
+                    jpt_axis,
+                    flav_axis, 
+                    Hist.axis.Regular(50, 0, 1, name=f"{tagger}{flavor}Disc", label=f"{tagger}{flavor}Disc"),
+                    Hist.axis.Regular(50, 0, 1, name=f"{tagger}{flavor}DiscN", label=f"{tagger}{flavor}DiscN"),
+                    Hist.storage.Weight()
+                )
+        
     elif "QCD" == workflow:
         obj_list = ["jet0"]
         # FIXME: commented SVJet related histogram until fixing linkinf of BTVNano
@@ -642,7 +659,8 @@ def histogrammer(events, workflow, year="2022", campaign="Summer22"):
                         Hist.axis.Regular(40, 0, 2, name="discr", label=disc),
                         Hist.storage.Weight(),
                     )
-
+            elif "QCD_light_sf" in workflow:
+                pass
             else:
                 if "btag" in disc or "ProbaN" == disc:
                     _hist_dict[f"{disc}_{i}"] = Hist.Hist(
@@ -707,6 +725,9 @@ def histo_writter(pruned_ev, output, weights, systematics, isSyst, SF_map):
     # define Jet flavor
 
     # Reduce the jet to the correct dimension in the plot
+    
+    
+    
     nj = 4 if "jet4" in output.keys() else 2 if "jet2" in output.keys() else 1
     pruned_ev.SelJet = pruned_ev.SelJet if nj == 1 else pruned_ev.SelJet[:, :nj]
     if "var" in str(ak.type(pruned_ev.SelJet.pt)) and nj == 1:
@@ -749,8 +770,68 @@ def histo_writter(pruned_ev, output, weights, systematics, isSyst, SF_map):
         )
         # Loop over the histograms
         for histname, h in output.items():
+            if "npvs" == histname:
+                h.fill(
+                    syst, 
+                    flatten(pruned_ev[histname]),
+                    weight=weight
+                )
+            elif "PNetB" == histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev["jpt"]),
+                    flatten(pruned_ev["flav"]),
+                    flatten(pruned_ev["PNetBDisc"]),
+                    flatten(pruned_ev["PNetBDiscN"]),
+                    weight=flatten(ak.ones_like(pruned_ev["jpt"]) * weight)
+                )
+            elif "PNetC" == histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev["jpt"]),
+                    flatten(pruned_ev["flav"]),
+                    flatten(pruned_ev["PNetCDisc"]),
+                    flatten(pruned_ev["PNetCDiscN"]),
+                    weight=flatten(ak.ones_like(pruned_ev["jpt"]) * weight)
+                )
+            elif "ParTB" == histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev["jpt"]),
+                    flatten(pruned_ev["flav"]),
+                    flatten(pruned_ev["ParTBDisc"]),
+                    flatten(pruned_ev["ParTBDiscN"]),
+                    weight=flatten(ak.ones_like(pruned_ev["jpt"]) * weight)
+                )
+            elif "ParTC" == histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev["jpt"]),
+                    flatten(pruned_ev["flav"]),
+                    flatten(pruned_ev["ParTCDisc"]),
+                    flatten(pruned_ev["ParTCDiscN"]),
+                    weight=flatten(ak.ones_like(pruned_ev["jpt"]) * weight)
+                )
+            elif "DeepFlavourB" == histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev["jpt"]),
+                    flatten(pruned_ev["flav"]),
+                    flatten(pruned_ev["DeepFlavourBDisc"]),
+                    flatten(pruned_ev["DeepFlavourBDiscN"]),
+                    weight=flatten(ak.ones_like(pruned_ev["jpt"]) * weight)
+                )
+            elif "DeepFlavourC" == histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev["jpt"]),
+                    flatten(pruned_ev["flav"]),
+                    flatten(pruned_ev["DeepFlavourCDisc"]),
+                    flatten(pruned_ev["DeepFlavourCDiscN"]),
+                    weight=flatten(ak.ones_like(pruned_ev["jpt"]) * weight)
+                )
             # tagger score histograms
-            if (
+            elif (
                 "Deep" in histname
                 and "btag" not in histname
                 and histname in pruned_ev.SelJet.fields
