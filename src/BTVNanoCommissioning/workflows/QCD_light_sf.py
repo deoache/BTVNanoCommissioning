@@ -131,11 +131,12 @@ class NanoProcessor(processor.ProcessorABC):
             req_lumi = self.lumiMask(events.run, events.luminosityBlock)
             
             # veto 2024 problematic runs
-            problematic_runs = [380126, 380127, 380128]
-            req_runs = np.ones(len(events), dtype="bool")
-            for problematic_run in problematic_runs:
-                req_runs = req_runs & (events.run != problematic_run)
-            req_lumi = req_lumi & req_runs
+            if self._year == "2024":
+                problematic_runs = [380126, 380127, 380128]
+                req_runs = np.ones(len(events), dtype="bool")
+                for problematic_run in problematic_runs:
+                    req_runs = req_runs & (events.run != problematic_run)
+                req_lumi = req_lumi & req_runs
             
         if shift_name is None:
             output = dump_lumi(events[req_lumi], output)
