@@ -96,7 +96,7 @@ def build_lumibins(ps, verbose=False):
         ]
         if verbose:
             print("Prescales: ", content)
-        return cs.Binning.parse_obj(
+        return cs.Binning.model_validate(
             {
                 "nodetype": "binning",
                 "input": "lumi",
@@ -111,7 +111,7 @@ def build_runs(ps, HLT_paths, verbose=False):
     runs = sorted(ps["# run"].unique())
     if verbose:
         print("Selected ", len(runs), ": ", runs)
-    return cs.Category.parse_obj(
+    return cs.Category.model_validate(
         {
             "nodetype": "category",
             "input": "run",
@@ -133,7 +133,7 @@ def build_paths(ps, HLT_paths, verbose=False):
     paths = [HLT_paths]
     if verbose:
         print("Type of path key: ", type(paths[0]), paths)
-    return cs.Category.parse_obj(
+    return cs.Category.model_validate(
         {
             "nodetype": "category",
             "input": "path",
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         ps_csvData = get_prescale(
             HLT, args.lumimask, args.verbose, args.test, args.force
         )
-        psCorr = cs.Correction.parse_obj(
+        psCorr = cs.Correction.model_validate(
             {
                 "version": 2,
                 "name": "prescaleWeight",
@@ -189,4 +189,4 @@ if __name__ == "__main__":
             f"src/BTVNanoCommissioning/data/Prescales/ps_weight_{HLT}_run{runs[0]}_{runs[-1]}.json",
             "w",
         ) as f:
-            f.write(cset.json(exclude_unset=True))
+            f.write(cset.model_dump_json(exclude_unset=True))
