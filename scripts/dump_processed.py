@@ -2,8 +2,7 @@ from coffea.util import load
 import awkward as ak
 import numpy as np
 import sys, json, glob
-import os
-
+import subprocess
 
 def dump_lumi(output, fname):
     lumi, run = [], []
@@ -30,17 +29,28 @@ def dump_lumi(output, fname):
     with open(f"{fname}_lumi.json", "w") as outfile:
         json.dump(dicts, outfile, indent=2)
 
-    lumi_in_pb = os.popen(
-        f"export PATH=$HOME/.local/bin:/cvmfs/cms-bril.cern.ch/brilconda3/bin:$PATH; brilcalc lumi -c web -i {fname}_lumi.json -u /pb "
-    ).read()
-    lumi_in_pb = lumi_in_pb[
-        lumi_in_pb.find("#Summary:") : lumi_in_pb.find("#Check JSON:")
-    ]
-    lumi_in_pb = float(lumi_in_pb.split("\n")[-3].split("|")[-2])
+    brilcalc_cmd = (
+        f"singularity -s exec --env PYTHONPATH=/home/bril/.local/lib/python3.10/site-packages "
+        f"/cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/cms-cloud/brilws-docker:latest "
+        f"brilcalc lumi --normtag src/BTVNanoCommissioning/data/lumiMasks/normtag_BRIL.json "
+        f"-c web -i {fname}_lumi.json -u /pb &> {fname}_lumi.txt"
+    )
+    subprocess.run(brilcalc_cmd, shell=True)
 
-    print(f"Luminosity in pb: {lumi_in_pb}")
+    with open(f"{fname}_lumi.txt") as f:
+        lumi_in_pb = f.read()
+    rows = [line for line in lumi_in_pb.splitlines() if line.strip().startswith("|")]
+    if not rows:
+        raise RuntimeError("No summary table found in output")
+    rows = [row for row in rows if "nfill" not in row]
+    last_row = rows[-1]
+    fields = [f.strip() for f in last_row.split("|") if f.strip()]
+    totdelivered = float(fields[-2])
+    totrecorded = float(fields[-1])
+    print(f"Total delivered: {totdelivered:.3f} pb")
+    print(f"Total recorded: {totrecorded:.3f} pb")
 
-
+    
 def dump_dataset(output, fname, alljson):
     jsonlist = glob.glob(alljson) if "*" in alljson else alljson.split(",")
     print("Original jsons:", jsonlist)
