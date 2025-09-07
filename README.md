@@ -56,13 +56,10 @@ micromamba env create -f test_env.yml
 
 ```bash
 # activate enviroment once you have coffea framework 
-conda/micromamba activate btv_coffea
-
 conda/micromamba activate  /eos/home-m/milee/miniforge3/envs/btv_coffea
 
-# only first time, including submodules
-git clone git@github.com:cms-btv-pog/BTVNanoCommissioning.git 
-# Once the environment is set up, compile the python package:
+# Once the environment is set up:
+git clone https://github.com/deoache/BTVNanoCommissioning.git
 pip install -e .
 pip install -e .[dev, doc] # for developer
 ```
@@ -72,5 +69,153 @@ You can still install additional packages itself by `pip install $PACKAGE`
 Make sure that 'dasgoclient' command is found by ensuring it is in your `$PATH` variable.
 Please, run `source env_setup_complete.sh` after having activated the environment to make sure that the `$PATH` variable is correctly configured.
 
-`conda/micromamba activate btv_coffea` is required to setup
 
+## QCD light workfow
+
+### 1. Workfow
+
+#### Output Histograms
+
+Each histogram is organized along three independent axes: Systematic axis (`syst`), Flavor axis (`flav`) and Jet transverse momentum axis (`jpt`). Based on these axes, the workflow defines several histograms:
+
+- **Inclusive jet histogram** (`jet_pt`): All selected jets as a function of $p_T$ and flavor, with systematic variations tracked along the additional axis.
+
+- **Post-tag histograms** (`UParTAK4B_{wp}_postag_jet_pt`): for each working point of the UParT b-tagging algorithm (Loose, Medium, Tight), a histogram is created containing jets that pass the corresponding discriminator threshold.
+
+- **Neg-tag histograms** (`UParTAK4B_{wp}_negtag_jet_pt`): these histograms store jets that pass the corresponding discriminator threshold for the negative UParT b-tagging discriminator
+
+
+#### Triggers and prescale weights
+
+The analysis uses PFJet triggers, each associated with a specific $p_T$ range for the leading jet. The selection requires that the leading jet falls within the range corresponding to a given trigger:
+```python
+triggers = {
+    "PFJet40": [45, 80],
+    "PFJet60": [80, 110],
+    "PFJet80": [110, 180],
+    "PFJet140": [180, 250],
+    "PFJet200": [250, 310],
+    "PFJet260": [310, 380],
+    "PFJet320": [380, 460],
+    "PFJet400": [460, 520],
+    "PFJet450": [520, 580],
+    "PFJet500": [580, 1e7],
+}
+```
+For each event, `req_trig` is constructed to be true if at least one trigger fires and the leading jet $p_T$ lies within the required range:
+```python
+req_trig = np.zeros(len(events), dtype="bool")
+trigbools = {}
+for trigger, ptrange in triggers.items():
+    ptmin = ptrange[0]
+    ptmax = ptrange[1]
+    # Require *leading jet* to be in the pT range of the trigger
+    thistrigreq = (
+        (HLT_helper(events, [trigger]))
+        & (ak.fill_none(ak.firsts(event_jet.pt) >= ptmin, False))
+        & (ak.fill_none(ak.firsts(event_jet.pt) < ptmax, False))
+    )
+    trigbools[trigger] = thistrigreq
+    req_trig = (req_trig) | (thistrigreq)
+```
+
+Triggers are subject to prescale factors, which reduce the accepted event rate. To correct for this, prescale weights (psweight) are applied
+```python
+weights = weight_manager(pruned_ev, self.SF_map, self.isSyst)
+if isRealData:
+    run_num = "378985_386951" # 2024
+    psweight = np.zeros(len(pruned_ev))
+    for trigger, trigbool in trigbools.items():
+        psfile = f"src/BTVNanoCommissioning/data/Prescales/ps_weight_{trigger}_run{run_num}.json"
+        pseval = correctionlib.CorrectionSet.from_file(psfile)
+        thispsweight = pseval["prescaleWeight"].evaluate(
+            pruned_ev.run,
+            f"HLT_{trigger}",
+            ak.values_astype(pruned_ev.luminosityBlock, np.float32),
+        )
+        psweight = ak.where(trigbool[event_level], thispsweight, psweight)
+    weights.add("psweight", psweight)
+
+```
+To build the prescale weights use the `dump_prescale.py` script:
+```bash
+# build prescale weights for HLT_PFJet40
+python scripts/dump_prescale.py -v --HLT PFJet40 --lumimask <golden_json>
+```
+For 2024 use `src/BTVNanoCommissioning/data/lumiMasks/Cert_Collisions2024_378981_386951_Golden.json` as golden json.
+
+
+### 2. Input filesets
+
+To generate input fileset type:
+
+```bash
+# MC
+python scripts/fetch.py -c Summer24 -i metadata/Summer24/QCD_light_sf_mc -o MC_Summer24_2024_QCD_light_sf.json --skipvalidation
+```
+```bash
+# Data
+python scripts/fetch.py -c Summer24 -i metadata/Summer24/QCD_light_sf_data -o data_Summer24_2024_QCD_light_sf.json --skipvalidation
+```
+
+### 4. Submit jobs to Condor
+
+You can submit jobs to condor (at lxplus) with:
+
+```bash
+# MC
+python condor_lxplus/submitter.py \
+  --workflow QCD_light_sf \
+  --json metadata/Summer24/MC_Summer24_2024_QCD_light_sf.json \
+  --campaign Summer24 \
+  --year 2024 \
+  --skipbadfiles \
+  --jobName qcd_light_sf_mc \
+  --outputDir <mc_outputDir> \
+  --condorFileSize 10 \
+  --submit
+
+# DATA
+python condor_lxplus/submitter.py \
+  --workflow QCD_light_sf \
+  --json metadata/Summer24/data_Summer24_2024_QCD_light_sf.json \
+  --campaign Summer24 \
+  --year 2024 \
+  --skipbadfiles \
+  --jobName qcd_light_sf_data \
+  --outputDir <data_outputDir> \
+  --condorFileSize 10 \
+  --submit
+```
+
+To check for missing files (add `-u` to update condor file):
+
+```bash
+# MC
+python scripts/missingFiles.py -j qcd_light_sf_mc -o <mc_outputDir>
+
+# DATA
+python scripts/missingFiles.py -j qcd_light_sf_data -o <data_outputDir>
+```
+
+### 5. Luminosity computation
+
+To extract the integrated luminosity from the output coffea files
+```bash
+python scripts/dump_processed.py -t lumi -c '<data_outputDir>/*/*.coffea' -n 2024 -j metadata/Summer24/data_Summer24_2024_QCD_light_sf.json
+```
+
+
+### 6. Data/MC plots
+
+To produce Data/MC comparison plots:
+```bash
+python scripts/plotdataMC.py \
+  -i '<data_outputDir>/*/*.coffea,<mc_outputDir>/*/*.coffea' \
+  --lumi 106356.676392530 \
+  -p QCD_light_sf \
+  -v all \
+  --split flavor \
+  --log \
+  --xrange 0,1000
+```
