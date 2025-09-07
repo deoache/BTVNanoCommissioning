@@ -89,8 +89,9 @@ def get_main_parser():
     parser.add_argument("--year", default="2023", help="Year")
     parser.add_argument(
         "--campaign",
-        default="Summer23",
+        default="Summer24",
         choices=[
+            "Summer24",
             "Rereco17_94X",
             "Winter22Run3",
             "Summer22",
