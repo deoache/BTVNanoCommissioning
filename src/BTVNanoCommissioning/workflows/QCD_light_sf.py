@@ -18,13 +18,6 @@ import correctionlib
 import numpy as np
 
 
-def normalize(array: ak.Array):
-    if array.ndim == 2:
-        return ak.fill_none(ak.flatten(array), np.nan)
-    else:
-        return ak.fill_none(array, np.nan)
-
-
 class NanoProcessor(processor.ProcessorABC):
     def __init__(
         self,
@@ -48,21 +41,18 @@ class NanoProcessor(processor.ProcessorABC):
         ## Load corrections
         self.SF_map = load_SF(self._year, self._campaign)
 
-        ## Define histogram axes
-        self._working_points = ["L", "M", "T"]
+        ## Set output histogram
         syst_axis = hist.axis.StrCategory([], name="syst", growth=True)
         flav_axis = hist.axis.IntCategory([0, 1, 4, 5, 6], name="flav", label="Genflavour")
         jpt_axis = hist.axis.Regular(300, 0, 3000, name="jpt", label="Jet $p_{T}$ [GeV]")
-        b_disc_axis = hist.axis.Regular(50, 0, 1, name=f"UParTAK4BDisc", label=f"UParTAK4BDisc")
-        b_discn_axis = hist.axis.Regular(50, 0, 1, name=f"UParTAK4BDiscN", label=f"UParTAK4BDiscN")
-        b_pass_disc_axis = hist.axis.IntCategory([0, 1], name=f"PassUParTAK4BDisc")
-        b_pass_discn_axis = hist.axis.IntCategory([0, 1], name=f"PassUParTAK4BDiscN")
 
-        ## Set output histogram
         self._hist_dict = {}
-        self._hist_dict["UParTAK4BDisc"] = hist.Hist(syst_axis, flav_axis, b_disc_axis, b_discn_axis, hist.storage.Weight())
+        self._working_points = ["L", "M", "T"]
+        
+        self._hist_dict["jet_pt"] = hist.Hist(syst_axis, jpt_axis, flav_axis, hist.storage.Weight())
         for wp in self._working_points:
-            self._hist_dict[f"PassUParTAK4BDisc_{wp}"] = hist.Hist(syst_axis, jpt_axis, flav_axis, b_pass_disc_axis, b_pass_discn_axis, hist.storage.Weight())
+            self._hist_dict[f"UParTAK4B_{wp}_postag_jet_pt"] = hist.Hist(syst_axis, jpt_axis, flav_axis, hist.storage.Weight())
+            self._hist_dict[f"UParTAK4B_{wp}_negtag_jet_pt"] = hist.Hist(syst_axis, jpt_axis, flav_axis, hist.storage.Weight())
         
 
     @property
@@ -149,29 +139,39 @@ class NanoProcessor(processor.ProcessorABC):
         # Selected objects #
         ####################
         pruned_ev = events[event_level]
-        pruned_ev["SelJet"] = event_jet[event_level][:, 0]
-        pruned_ev["jpt"] = pruned_ev.SelJet.pt
-        pruned_ev["UParTAK4BDisc"] = pruned_ev.SelJet.btagPNetB
-        pruned_ev["UParTAK4BDiscN"] = pruned_ev.SelJet.btagNegPNetB
+        pruned_ev["SelJet"] = event_jet[event_level]
 
+        if not isRealData:
+            flav = ak.values_astype(
+                ak.where(
+                    (event_jet.hadronFlavour == 0) & (event_jet.partonFlavour == 0),
+                    event_jet.hadronFlavour + 1,
+                    event_jet.hadronFlavour,
+                ),
+                int
+            )
+            
         for wp in self._working_points:
             wp_value = btag_wp_dict[f"{self._year}_{self._campaign}"]["UParTAK4"]["b"][wp]
-            pruned_ev[f"PassUParTAK4BDisc_{wp}"] = (pruned_ev.SelJet.btagUParTAK4B > wp_value)
-            pruned_ev[f"PassUParTAK4BDiscN_{wp}"] = (pruned_ev.SelJet.btagNegUParTAK4B > wp_value)
+            postag_mask = event_jet.btagUParTAK4B > wp_value
+            negtag_mask = event_jet.btagNegUParTAK4B > wp_value
+            postag_jet = event_jet[postag_mask][event_level]
+            negtag_jet = event_jet[negtag_mask][event_level]
+            pruned_ev[f"UParTAK4B_{wp}_postag_jet"] = postag_jet
+            pruned_ev[f"UParTAK4B_{wp}_negtag_jet"] = negtag_jet
+
+            if isRealData:
+                pruned_ev[f"UParTAK4B_{wp}_postag_jet", "flav"] = ak.zeros_like(postag_jet.pt, dtype=int)
+                pruned_ev[f"UParTAK4B_{wp}_negtag_jet", "flav"] = ak.zeros_like(negtag_jet.pt, dtype=int)
+            else:
+                pruned_ev[f"UParTAK4B_{wp}_postag_jet", "flav"] = flav[postag_mask][event_level]
+                pruned_ev[f"UParTAK4B_{wp}_negtag_jet", "flav"] = flav[negtag_mask][event_level]
 
         if isRealData:
-            pruned_ev["flav"] = ak.zeros_like(pruned_ev.SelJet.pt, dtype=int)
+            pruned_ev["SelJet", "flav"] = ak.zeros_like(event_jet[event_level].pt, dtype=int)
         else:
-            pruned_ev["flav"] = ak.values_astype(
-                pruned_ev.SelJet.hadronFlavour
-                + 1
-                * (
-                    (pruned_ev.SelJet.partonFlavour == 0)
-                    & (pruned_ev.SelJet.hadronFlavour == 0)
-                ),
-                int,
-            )
-
+            pruned_ev["SelJet", "flav"] = flav[event_level]
+            
         ####################
         #     Output       #
         ####################
@@ -211,58 +211,69 @@ class NanoProcessor(processor.ProcessorABC):
                     weight = weights.weight()
                 else:
                     weight = weights.weight(modifier=syst)
-                    
-                output["UParTAK4BDisc"].fill(
-                    syst=syst,
-                    flav=normalize(pruned_ev.flav),
-                    UParTAK4BDisc=normalize(pruned_ev.UParTAK4BDisc),
-                    UParTAK4BDiscN=normalize(pruned_ev.UParTAK4BDiscN),
-                    weight=weight
+
+                print(f"{pruned_ev.SelJet.flav=}")
+                print(f"{flatten(pruned_ev.SelJet.flav)=}")
+                output["jet_pt"].fill(
+                    syst,
+                    flatten(pruned_ev.SelJet.pt),
+                    flatten(pruned_ev.SelJet.flav),
+                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
                 )
                 for wp in self._working_points:
-                    output[f"PassUParTAK4BDisc_{wp}"].fill(
-                        syst=syst,
-                        flav=normalize(pruned_ev.flav),
-                        jpt=normalize(pruned_ev.jpt),
-                        PassUParTAK4BDisc=normalize(pruned_ev[f"PassUParTAK4BDisc_{wp}"]),
-                        PassUParTAK4BDiscN=normalize(pruned_ev[f"PassUParTAK4BDiscN_{wp}"]),
-                        weight=weight
+                    output[f"UParTAK4B_{wp}_postag_jet_pt"].fill(
+                        syst,
+                        flatten(pruned_ev[f"UParTAK4B_{wp}_postag_jet"].pt),
+                        flatten(pruned_ev[f"UParTAK4B_{wp}_postag_jet"].flav),
+                        weight=flatten(ak.broadcast_arrays(weight, pruned_ev[f"UParTAK4B_{wp}_postag_jet"].pt)[0]),
+                    )
+                    output[f"UParTAK4B_{wp}_negtag_jet_pt"].fill(
+                        syst,
+                        flatten(pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].pt),
+                        flatten(pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].flav),
+                        weight=flatten(ak.broadcast_arrays(weight, pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].pt)[0]),
                     )
         elif (not isRealData) and (shift_name is not None):
             weight = weights.weight()
-            output["UParTAK4BDisc"].fill(
-                syst=shift_name,
-                flav=normalize(pruned_ev.flav),
-                UParTAK4BDisc=normalize(pruned_ev.UParTAK4BDisc),
-                UParTAK4BDiscN=normalize(pruned_ev.UParTAK4BDiscN),
-                weight=weight
+            output["jet_pt"].fill(
+                shift_name,
+                flatten(pruned_ev.SelJet.pt),
+                flatten(pruned_ev.SelJet.flav),
+                weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
             )
             for wp in self._working_points:
-                output[f"PassUParTAK4BDisc_{wp}"].fill(
-                    syst=shift_name,
-                    flav=normalize(pruned_ev.flav),
-                    jpt=normalize(pruned_ev.jpt),
-                    PassUParTAK4BDisc=normalize(pruned_ev[f"PassUParTAK4BDisc_{wp}"]),
-                    PassUParTAK4BDiscN=normalize(pruned_ev[f"PassUParTAK4BDiscN_{wp}"]),
-                    weight=weight
+                output[f"UParTAK4B_{wp}_postag_jet_pt"].fill(
+                    shift_name,
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_postag_jet"].pt),
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_postag_jet"].flav),
+                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev[f"UParTAK4B_{wp}_postag_jet"].pt)[0]),
+                )
+                output[f"UParTAK4B_{wp}_negtag_jet_pt"].fill(
+                    shift_name,
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].pt),
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].flav),
+                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].pt)[0]),
                 )
         elif isRealData and (shift_name is None):
             weight = weights.weight()
-            output["UParTAK4BDisc"].fill(
-                syst="nominal",
-                flav=normalize(pruned_ev.flav),
-                UParTAK4BDisc=normalize(pruned_ev.UParTAK4BDisc),
-                UParTAK4BDiscN=normalize(pruned_ev.UParTAK4BDiscN),
-                weight=weight
+            output["jet_pt"].fill(
+                "nominal",
+                flatten(pruned_ev.SelJet.pt),
+                flatten(pruned_ev.SelJet.flav),
+                weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
             )
             for wp in self._working_points:
-                output[f"PassUParTAK4BDisc_{wp}"].fill(
-                    syst="nominal",
-                    flav=normalize(pruned_ev.flav),
-                    jpt=normalize(pruned_ev.jpt),
-                    PassUParTAK4BDisc=normalize(pruned_ev[f"PassUParTAK4BDisc_{wp}"]),
-                    PassUParTAK4BDiscN=normalize(pruned_ev[f"PassUParTAK4BDiscN_{wp}"]),
-                    weight=weight 
+                output[f"UParTAK4B_{wp}_postag_jet_pt"].fill(
+                    "nominal",
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_postag_jet"].pt),
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_postag_jet"].flav),
+                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev[f"UParTAK4B_{wp}_postag_jet"].pt)[0]),
+                )
+                output[f"UParTAK4B_{wp}_negtag_jet_pt"].fill(
+                    "nominal",
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].pt),
+                    flatten(pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].flav),
+                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev[f"UParTAK4B_{wp}_negtag_jet"].pt)[0]),
                 )
 
         return {dataset: output}
