@@ -442,7 +442,7 @@ def jetveto(jets, correct_map):
                 jets.phi, jets.eta
             )
             > 0,
-            ak.ones_like(jets.eta),
+            ak.broadcast_arrays(jets.eta, 100),
             ak.zeros_like(jets.eta),
         )
 
@@ -820,12 +820,7 @@ def JME_shifts(
     else:
         met = events.PuppiMET
         jets = events.Jet
-    # perform jet veto
-    if "jetveto" in correct_map.keys():
-        jets = update(jets, {"veto": jetveto(jets, correct_map)})
 
-        if "Summer22" in campaign:
-            jets = jets[jets.veto != 1]
     shifts.insert(0, ({"Jet": jets, "MET": met}, None))
     return shifts
 
@@ -1998,13 +1993,10 @@ class JPCalibHandler(object):
 def common_shifts(self, events):
     """
     Apply common shifts to a events(mostly affect energy resolution/scale of objects).
-
     This function applies common shifts to the input DataFrame based on the specified shift type.
     It modifies the DataFrame in place to reflect the systematic variations/dedicated corrections.
-    This includes JERC corrections, rochester corrections.
-
-
-    - Scale/Resolution Corrections:
+    This includes JERC, Rochester (Run 2), muon scale & smearing (SS), and electron SS corrections.
+    Scale/Resolution Corrections:
     Construct a shift list with tuples of (obj_dict, shift_name).
     These corrections are applied independently on all objects by updating the contents of the branch.
     Normally done before selection to apply updated objects.
@@ -2012,7 +2004,7 @@ def common_shifts(self, events):
     Example for Shift List:
     ```python
     # nominal correction
-    shift = [({"Jet": jets, "MET": met, "Muon" : muon}, None)]
+    shift = [({"Jet": jets, "MET": met, "Muon": muon, "Electron": ele}, None)]
     # add variations
     shifts += [
                     (
@@ -2030,20 +2022,21 @@ def common_shifts(self, events):
                         },
                         "JESDown",
                     )]
-    ``
-    Different treatment for weights and scale/resolution shifts is necessary to ensure accurate corrections and uncertainties are applied to the data.
-
+    ```
+    Different treatment for weights and scale/resolution shifts is necessary
+    to ensure accurate corrections and uncertainties are applied to the data.
     Parameters:
     self (dict): The configuration dictionary from SF_map containing the scale factors and other settings.
     events (events): The input events containing the data to be shifted.
-
     Returns:
     pandas.DataFrame: The DataFrame with the applied systematic shifts.
     """
 
     isRealData = not hasattr(events, "genWeight")
     dataset = events.metadata["dataset"]
+
     shifts = []
+
     if "JME" in self.SF_map.keys():
         syst_JERC = self.isSyst
         if self.isSyst == "JERC_split":
@@ -2061,23 +2054,50 @@ def common_shifts(self, events):
         ## Using PFMET
         if int(self._year) < 2020:
             shifts = [
-                ({"Jet": events.Jet, "MET": events.MET, "Muon": events.Muon}, None)
+                (
+                    {
+                        "Jet": events.Jet,
+                        "MET": events.MET,
+                    },
+                    None
+                )
             ]
+        ## Using PuppiMET
         else:
-            ## Using PuppiMET
             shifts = [
                 (
                     {
                         "Jet": events.Jet,
                         "MET": events.PuppiMET,
-                        "Muon": events.Muon,
                     },
                     None,
                 )
             ]
     if "roccor" in self.SF_map.keys():
         shifts = Roccor_shifts(shifts, self.SF_map, events, isRealData, False)
-    return shifts
+    elif "muonSS" in self.SF_map.keys():
+        shifts = MUO_shifts(shifts, self.SF_map, events, isRealData, False)
+    else:
+        for shift in shifts:
+            shift[0]["Muon"] = events.Muon
+    if "electronSS" in self.SF_map.keys():
+        shifts = EGM_shifts(shifts, self.SF_map, events, isRealData, False)
+    else:
+        for shift in shifts:
+            shift[0]["Electron"] = events.Electron
+
+    # Apply jet veto
+    if "jetveto" in self.SF_map.keys():
+        jet_veto = jetveto(events.Jet, self.SF_map)
+        event_veto = ak.any(jet_veto > 0, axis=1)
+        vetoed_events = events[~event_veto]
+        for collections, _ in shifts:
+            for key in collections:
+                collections[key] = collections[key][~event_veto]
+    else:
+        vetoed_events = events
+
+    return vetoed_events, shifts
 
 
 # common weights
