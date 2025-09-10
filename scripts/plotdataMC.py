@@ -488,6 +488,7 @@ for index, discr in enumerate(var_set):
             splitflav_stack,
             stack=True,
             histtype="fill",
+            sort="yield",
             label=labels,
             yerr=True,
             ax=ax,
@@ -594,7 +595,7 @@ for index, discr in enumerate(var_set):
         ax.legend(ncols=2, prop={"size": 16})
     else:
         ax.legend()
-    rax.set_ylim(0.5, 1.5)
+    rax.set_ylim(0, 2)
     ax.set_ylim(bottom=0.0)
 
     rax.autoscale(True, axis="x", tight=True)
