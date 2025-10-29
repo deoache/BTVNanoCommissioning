@@ -42,17 +42,7 @@ class NanoProcessor(processor.ProcessorABC):
         self.SF_map = load_SF(self._year, self._campaign)
 
         ## Set output histogram
-        syst_axis = hist.axis.StrCategory([], name="syst", growth=True)
-        flav_axis = hist.axis.IntCategory(
-            [0, 1, 4, 5, 6], name="flav", label="Genflavour"
-        )
-        jpt_axis = hist.axis.Regular(
-            300, 0, 3000, name="jpt", label="Jet $p_{T}$ [GeV]"
-        )
-
-        self._hist_dict = {}
         self._working_points = ["L", "M", "T"]
-
         taggers = {
             "2022_Summer22": "RobustParTAK4",
             "2022_Summer22EE": "RobustParTAK4",
@@ -62,15 +52,32 @@ class NanoProcessor(processor.ProcessorABC):
         }
         self.tagger = taggers[f"{self._year}_{self._campaign}"]
 
+        syst_axis = hist.axis.StrCategory([], name="syst", growth=True)
+        flav_axis = hist.axis.IntCategory(
+            [0, 1, 4, 5, 6], name="flav", label="Genflavour"
+        )
+        eta_axis = hist.axis.Regular(25, -2.5, 2.5, name="eta", label=r"$\eta$")
+
+        self._hist_dict = {}
         self._hist_dict["jet_pt"] = hist.Hist(
-            syst_axis, jpt_axis, flav_axis, hist.storage.Weight()
+            syst_axis,
+            eta_axis,
+            hist.axis.Regular(300, 0, 3000, name="jpt", label="Jet $p_{T}$ [GeV]"),
+            flav_axis,
+            hist.storage.Weight(),
         )
         for wp in self._working_points:
-            self._hist_dict[f"{self.tagger}B_{wp}_postag_jet_pt"] = hist.Hist(
-                syst_axis, jpt_axis, flav_axis, hist.storage.Weight()
-            )
             self._hist_dict[f"{self.tagger}B_{wp}_negtag_jet_pt"] = hist.Hist(
-                syst_axis, jpt_axis, flav_axis, hist.storage.Weight()
+                syst_axis,
+                hist.axis.Regular(
+                    300,
+                    0,
+                    3000,
+                    name="jpt",
+                    label=f"{self.tagger}B_{wp} Negtag Jet $p_T$ [GeV]",
+                ),
+                flav_axis,
+                hist.storage.Weight(),
             )
 
     @property
@@ -173,24 +180,15 @@ class NanoProcessor(processor.ProcessorABC):
             wp_value = btag_wp_dict[f"{self._year}_{self._campaign}"][self.tagger]["b"][
                 wp
             ]
-            postag_mask = event_jet[f"btag{self.tagger}B"] > wp_value
             negtag_mask = event_jet[f"btagNeg{self.tagger}B"] > wp_value
-            postag_jet = event_jet[postag_mask][event_level]
             negtag_jet = event_jet[negtag_mask][event_level]
-            pruned_ev[f"{self.tagger}B_{wp}_postag_jet"] = postag_jet
             pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"] = negtag_jet
 
             if isRealData:
-                pruned_ev[f"{self.tagger}B_{wp}_postag_jet", "flav"] = ak.zeros_like(
-                    postag_jet.pt, dtype=int
-                )
                 pruned_ev[f"{self.tagger}B_{wp}_negtag_jet", "flav"] = ak.zeros_like(
                     negtag_jet.pt, dtype=int
                 )
             else:
-                pruned_ev[f"{self.tagger}B_{wp}_postag_jet", "flav"] = flav[
-                    postag_mask
-                ][event_level]
                 pruned_ev[f"{self.tagger}B_{wp}_negtag_jet", "flav"] = flav[
                     negtag_mask
                 ][event_level]
@@ -230,6 +228,19 @@ class NanoProcessor(processor.ProcessorABC):
                 )
                 psweight = ak.where(trigbool[event_level], thispsweight, psweight)
             weights.add("psweight", psweight)
+        else:
+            qcd_norm_file = f"src/BTVNanoCommissioning/data/QCD/{self._year}_norm_QCD_weights.json.gz"
+            if not os.path.isfile(qcd_norm_file):
+                raise NotImplementedError(
+                    f"QCD norm weights not available for {self._year}"
+                )
+            qcdeval = correctionlib.CorrectionSet.from_file(qcd_norm_file)
+            qcd_norm_weight = pseval["QCDNormWeight"].evaluate(
+                pruned_ev.SelJet.pt,
+                pruned_ev.SelJet.eta,
+            )
+            qcd_norm_weight = ak.fill_none(qcd_norm_weight, 1)
+            weights.add("qcd_norm_weight", qcd_norm_weight)
 
         ####################
         #     Output       #
@@ -244,21 +255,12 @@ class NanoProcessor(processor.ProcessorABC):
 
                 output["jet_pt"].fill(
                     syst,
+                    flatten(pruned_ev.SelJet.eta),
                     flatten(pruned_ev.SelJet.pt),
                     flatten(pruned_ev.SelJet.flav),
                     weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
                 )
                 for wp in self._working_points:
-                    output[f"{self.tagger}B_{wp}_postag_jet_pt"].fill(
-                        syst,
-                        flatten(pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].pt),
-                        flatten(pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].flav),
-                        weight=flatten(
-                            ak.broadcast_arrays(
-                                weight, pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].pt
-                            )[0]
-                        ),
-                    )
                     output[f"{self.tagger}B_{wp}_negtag_jet_pt"].fill(
                         syst,
                         flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt),
@@ -273,21 +275,12 @@ class NanoProcessor(processor.ProcessorABC):
             weight = weights.weight()
             output["jet_pt"].fill(
                 shift_name,
+                flatten(pruned_ev.SelJet.eta),
                 flatten(pruned_ev.SelJet.pt),
                 flatten(pruned_ev.SelJet.flav),
                 weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
             )
             for wp in self._working_points:
-                output[f"{self.tagger}B_{wp}_postag_jet_pt"].fill(
-                    shift_name,
-                    flatten(pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].pt),
-                    flatten(pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].flav),
-                    weight=flatten(
-                        ak.broadcast_arrays(
-                            weight, pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].pt
-                        )[0]
-                    ),
-                )
                 output[f"{self.tagger}B_{wp}_negtag_jet_pt"].fill(
                     shift_name,
                     flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt),
@@ -302,21 +295,12 @@ class NanoProcessor(processor.ProcessorABC):
             weight = weights.weight()
             output["jet_pt"].fill(
                 "nominal",
+                flatten(pruned_ev.SelJet.eta),
                 flatten(pruned_ev.SelJet.pt),
                 flatten(pruned_ev.SelJet.flav),
                 weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
             )
             for wp in self._working_points:
-                output[f"{self.tagger}B_{wp}_postag_jet_pt"].fill(
-                    "nominal",
-                    flatten(pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].pt),
-                    flatten(pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].flav),
-                    weight=flatten(
-                        ak.broadcast_arrays(
-                            weight, pruned_ev[f"{self.tagger}B_{wp}_postag_jet"].pt
-                        )[0]
-                    ),
-                )
                 output[f"{self.tagger}B_{wp}_negtag_jet_pt"].fill(
                     "nominal",
                     flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt),
