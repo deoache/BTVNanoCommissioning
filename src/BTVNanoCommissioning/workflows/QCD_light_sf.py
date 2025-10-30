@@ -235,11 +235,20 @@ class NanoProcessor(processor.ProcessorABC):
                     f"QCD norm weights not available for {self._year}"
                 )
             qcdeval = correctionlib.CorrectionSet.from_file(qcd_norm_file)
-            qcd_norm_weight = pseval["QCDNormWeight"].evaluate(
-                pruned_ev.SelJet.pt,
-                pruned_ev.SelJet.eta,
+
+            jet_counts = ak.num(pruned_ev.SelJet.pt)
+            flat_jet_pt = ak.flatten(pruned_ev.SelJet.pt)
+            flat_jet_eta = ak.flatten(pruned_ev.SelJet.eta)
+            in_jets = flat_jet_pt < 1000
+
+            input_pt = ak.fill_none(flat_jet_pt.mask[in_jets], 30.0)
+            input_eta = ak.fill_none(flat_jet_eta.mask[in_jets], 0.0)
+
+            qcd_norm_sfs = qcdeval["QCDNormWeight"].evaluate(input_pt, input_eta)
+            qcd_norm_sfs = ak.where(in_jets, qcd_norm_sfs, ak.ones_like(qcd_norm_sfs))
+            qcd_norm_weight = ak.fill_none(
+                ak.prod(ak.unflatten(qcd_norm_sfs, jet_counts), axis=1), value=1
             )
-            qcd_norm_weight = ak.fill_none(qcd_norm_weight, 1)
             weights.add("qcd_norm_weight", qcd_norm_weight)
 
         ####################
