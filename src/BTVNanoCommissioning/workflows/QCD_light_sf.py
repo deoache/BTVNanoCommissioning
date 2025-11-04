@@ -241,7 +241,7 @@ class NanoProcessor(processor.ProcessorABC):
             jet_counts = ak.num(pruned_ev.SelJet.pt)
             flat_jet_pt = ak.flatten(pruned_ev.SelJet.pt)
             flat_jet_isbarrel = ak.flatten(np.abs(pruned_ev.SelJet.eta) < 1.3)
-            in_jets = flat_jet_pt < 1000
+            in_jets = flat_jet_pt < 500
 
             input_pt = ak.fill_none(flat_jet_pt.mask[in_jets], 30.0)
             input_eta = ak.fill_none(flat_jet_isbarrel.mask[in_jets], False)
@@ -261,7 +261,7 @@ class NanoProcessor(processor.ProcessorABC):
                 negtag_jet_counts = ak.num(negtag_jet.pt)
                 flat_negtag_jet_pt = ak.flatten(negtag_jet.pt)
                 flat_negtag_jet_isbarrel = ak.flatten(np.abs(negtag_jet.eta) < 1.3)
-                in_jets_negtag = flat_negtag_jet_pt < 1000
+                in_jets_negtag = flat_negtag_jet_pt < 500
     
                 input_pt_negtag = ak.fill_none(flat_negtag_jet_pt.mask[in_jets_negtag], 30.0)
                 input_eta_negtag = ak.fill_none(flat_negtag_jet_isbarrel.mask[in_jets_negtag], False)
