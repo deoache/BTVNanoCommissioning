@@ -56,7 +56,7 @@ class NanoProcessor(processor.ProcessorABC):
         flav_axis = hist.axis.IntCategory(
             [0, 1, 4, 5, 6], name="flav", label="Genflavour"
         )
-        eta_axis = hist.axis.Regular(25, -2.5, 2.5, name="eta", label=r"$\eta$")
+        eta_axis = hist.axis.Regular(22, 0, 2.5, name="eta", label=r"$|\eta|$")
 
         self._hist_dict = {}
         self._hist_dict["jet_pt"] = hist.Hist(
@@ -69,6 +69,7 @@ class NanoProcessor(processor.ProcessorABC):
         for wp in self._working_points:
             self._hist_dict[f"{self.tagger}B_{wp}_negtag_jet_pt"] = hist.Hist(
                 syst_axis,
+                eta_axis,
                 hist.axis.Regular(
                     300,
                     0,
@@ -236,20 +237,38 @@ class NanoProcessor(processor.ProcessorABC):
                 )
             qcdeval = correctionlib.CorrectionSet.from_file(qcd_norm_file)
 
+            # all jets
             jet_counts = ak.num(pruned_ev.SelJet.pt)
             flat_jet_pt = ak.flatten(pruned_ev.SelJet.pt)
-            flat_jet_eta = ak.flatten(pruned_ev.SelJet.eta)
+            flat_jet_isbarrel = ak.flatten(np.abs(pruned_ev.SelJet.eta) < 1.3)
             in_jets = flat_jet_pt < 1000
 
             input_pt = ak.fill_none(flat_jet_pt.mask[in_jets], 30.0)
-            input_eta = ak.fill_none(flat_jet_eta.mask[in_jets], 0.0)
+            input_eta = ak.fill_none(flat_jet_isbarrel.mask[in_jets], False)
 
             qcd_norm_sfs = qcdeval["QCDNormWeight"].evaluate(input_pt, input_eta)
             qcd_norm_sfs = ak.where(in_jets, qcd_norm_sfs, ak.ones_like(qcd_norm_sfs))
-            qcd_norm_weight = ak.fill_none(
-                ak.prod(ak.unflatten(qcd_norm_sfs, jet_counts), axis=1), value=1
-            )
-            weights.add("qcd_norm_weight", qcd_norm_weight)
+
+            # negtag jets
+            qcd_norm_sfs_negtag = {}
+            for wp in self._working_points:
+                wp_value = btag_wp_dict[f"{self._year}_{self._campaign}"][self.tagger]["b"][
+                    wp
+                ]
+                negtag_mask = event_jet[f"btagNeg{self.tagger}B"] > wp_value
+                negtag_jet = event_jet[negtag_mask][event_level]
+                
+                negtag_jet_counts = ak.num(negtag_jet.pt)
+                flat_negtag_jet_pt = ak.flatten(negtag_jet.pt)
+                flat_negtag_jet_isbarrel = ak.flatten(np.abs(negtag_jet.eta) < 1.3)
+                in_jets_negtag = flat_negtag_jet_pt < 1000
+    
+                input_pt_negtag = ak.fill_none(flat_negtag_jet_pt.mask[in_jets_negtag], 30.0)
+                input_eta_negtag = ak.fill_none(flat_negtag_jet_isbarrel.mask[in_jets_negtag], False)
+                
+                qcd_norm_sf_negtag = qcdeval["QCDNormWeight"].evaluate(input_pt_negtag, input_eta_negtag)
+                qcd_norm_sfs_negtag[wp] = ak.where(in_jets_negtag, qcd_norm_sf_negtag, ak.ones_like(qcd_norm_sf_negtag))
+
 
         ####################
         #     Output       #
@@ -264,17 +283,18 @@ class NanoProcessor(processor.ProcessorABC):
 
                 output["jet_pt"].fill(
                     syst,
-                    flatten(pruned_ev.SelJet.eta),
+                    flatten(np.abs(pruned_ev.SelJet.eta)),
                     flatten(pruned_ev.SelJet.pt),
                     flatten(pruned_ev.SelJet.flav),
-                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
+                    weight=qcd_norm_sfs * flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
                 )
                 for wp in self._working_points:
                     output[f"{self.tagger}B_{wp}_negtag_jet_pt"].fill(
                         syst,
+                        flatten(np.abs(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].eta)),
                         flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt),
                         flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].flav),
-                        weight=flatten(
+                        weight=qcd_norm_sfs_negtag[wp] * flatten(
                             ak.broadcast_arrays(
                                 weight, pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt
                             )[0]
@@ -284,7 +304,7 @@ class NanoProcessor(processor.ProcessorABC):
             weight = weights.weight()
             output["jet_pt"].fill(
                 shift_name,
-                flatten(pruned_ev.SelJet.eta),
+                flatten(np.abs(pruned_ev.SelJet.eta)),
                 flatten(pruned_ev.SelJet.pt),
                 flatten(pruned_ev.SelJet.flav),
                 weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
@@ -292,6 +312,7 @@ class NanoProcessor(processor.ProcessorABC):
             for wp in self._working_points:
                 output[f"{self.tagger}B_{wp}_negtag_jet_pt"].fill(
                     shift_name,
+                    flatten(np.abs(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].eta)),
                     flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt),
                     flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].flav),
                     weight=flatten(
@@ -304,7 +325,7 @@ class NanoProcessor(processor.ProcessorABC):
             weight = weights.weight()
             output["jet_pt"].fill(
                 "nominal",
-                flatten(pruned_ev.SelJet.eta),
+                flatten(np.abs(pruned_ev.SelJet.eta)),
                 flatten(pruned_ev.SelJet.pt),
                 flatten(pruned_ev.SelJet.flav),
                 weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
@@ -312,6 +333,7 @@ class NanoProcessor(processor.ProcessorABC):
             for wp in self._working_points:
                 output[f"{self.tagger}B_{wp}_negtag_jet_pt"].fill(
                     "nominal",
+                    flatten(np.abs(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].eta)),
                     flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].pt),
                     flatten(pruned_ev[f"{self.tagger}B_{wp}_negtag_jet"].flav),
                     weight=flatten(
