@@ -13,6 +13,7 @@ from .histograms.qcd import get_histograms as qcd_hists
 from .histograms.qcd_smu import get_histograms as qcd_smu_hists
 from .histograms.validation import get_histograms as validation_hists
 from .histograms.wc import get_histograms as wc_hists
+from .histograms.QCD_negtag_lsf import get_histograms as qcd_negtag_lsf_hists
 
 
 def get_axes_collections(
@@ -54,6 +55,7 @@ def get_hist_collections(axes: dict, hist_collections: list, **kwargs):
         "ttsemilep": ttsemilep_hists,
         "validation": validation_hists,
         "Wc": wc_hists,
+        "QCD_negtag_lsf": qcd_negtag_lsf_hists,
     }
 
     output = {}

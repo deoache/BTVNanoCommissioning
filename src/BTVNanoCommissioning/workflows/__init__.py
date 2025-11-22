@@ -40,6 +40,9 @@ from BTVNanoCommissioning.workflows.QCD_validation import (
 from BTVNanoCommissioning.workflows.QCD_soft_mu_validation import (
     NanoProcessor as QCDsmuValidProcessor,
 )
+from BTVNanoCommissioning.workflows.QCD_negtag_lsf import (
+    NanoProcessor as QCDNegTagProcessor,
+)
 
 ## BTA - for SFs
 from BTVNanoCommissioning.workflows.BTA_producer import (
@@ -91,6 +94,7 @@ workflows["sf_ttsemilep_tnp"] = TTsemilepTnPSFProcessor
 ##QCD
 workflows["QCD_sf"] = QCDValidProcessor
 workflows["QCD_smu_sf"] = QCDsmuValidProcessor
+workflows["QCD_negtag_lsf"] = QCDNegTagProcessor
 
 # W+c
 workflows["ctag_Wc_sf"] = partial(CTAGWcTTValidSFProcessor, selectionModifier="WcM")

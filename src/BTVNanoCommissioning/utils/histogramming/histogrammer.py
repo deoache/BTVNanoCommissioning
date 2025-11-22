@@ -2,6 +2,7 @@ import hist as Hist
 import awkward as ak
 from BTVNanoCommissioning.helpers.func import flatten
 from .hist_helpers import get_hist_collections, get_axes_collections
+from BTVNanoCommissioning.utils.selection import btag_wp_dict
 
 
 def histogrammer(
@@ -60,7 +61,9 @@ def histo_writer(pruned_ev, output, weights, systematics, isSyst, SF_map):
 
 
 # Filled common histogram
-def histo_writter(pruned_ev, output, weights, systematics, isSyst, SF_map):
+def histo_writter(
+    pruned_ev, output, weights, systematics, isSyst, SF_map, year, campaign
+):
     """
     Write histograms to the output dictionary based on pruned events and other parameters.
 
@@ -161,6 +164,32 @@ def histo_writter(pruned_ev, output, weights, systematics, isSyst, SF_map):
                         )[0]
                     ),
                 )
+            # QCD negtag histograms
+            elif "qcd_jet_pt" in histname:
+                h.fill(
+                    syst,
+                    flatten(pruned_ev.SelJet.flavor),
+                    flatten(pruned_ev.SelJet.pt),
+                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
+                )
+            elif "qcd_negtag_jet_pt" in histname:
+                for tagger, tag_obj in btag_wp_dict[f"{year}_{campaign}"].items():
+                    for stringency, wp in tag_obj["b"].items():
+                        if stringency == "No":
+                            continue
+
+                        key = f"{tagger}{stringency}"
+                        if histname == f"{key}_qcd_negtag_jet_pt":
+                            h.fill(
+                                syst,
+                                flatten(pruned_ev[f"{key}_negtag_jet"].flavor),
+                                flatten(pruned_ev[f"{key}_negtag_jet"].pt),
+                                weight=flatten(
+                                    ak.broadcast_arrays(
+                                        weight, pruned_ev[f"{key}_negtag_jet"].pt
+                                    )[0]
+                                ),
+                            )
             # PFcands histograms
             elif (
                 "PFCands" in pruned_ev.fields
