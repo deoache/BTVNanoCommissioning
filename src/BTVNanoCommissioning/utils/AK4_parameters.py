@@ -196,19 +196,19 @@ correction_config = {
             "Run2024I": "Summer24Prompt24_V1",
         },
         "jetveto": {"Summer24Prompt24_RunBCDEFGHI_V1": "jetvetomap"},
-        "MUO": {
-            "mu_ID": "NUM_TightID_DEN_TrackerMuons",
-            "mu_Iso": "NUM_TightPFIso_DEN_TightID",
-        },
-        "EGM": {
-            "ele_Reco 2024 Electron-ID-SF": "",
-            "ele_ID 2024 Electron-ID-SF": "wp80iso",
-        },
-        "muonSS": "",
-        "electronSS": [
-            "Scale",
-            "SmearAndSyst",
-        ],
+        #"MUO": {
+        #    "mu_ID": "NUM_TightID_DEN_TrackerMuons",
+        #    "mu_Iso": "NUM_TightPFIso_DEN_TightID",
+        #},
+        #"EGM": {
+        #    "ele_Reco 2024 Electron-ID-SF": "",
+        #    "ele_ID 2024 Electron-ID-SF": "wp80iso",
+        #},
+        #"muonSS": "",
+        #"electronSS": [
+        #    "Scale",
+        #    "SmearAndSyst",
+        #],
     },
     "prompt_dataMC": {"DC": "$PROMPT_DATAMC"},
 }
