@@ -41,8 +41,8 @@ for key in  isArray noHist overwrite skipbadfiles; do
 done
 OPTS="$OPTS --output ${ARGS[output]//.coffea/_$JOBID.coffea}"  # add a suffix to output file name
 OPTS="$OPTS --json $WORKDIR/sample.json"  # use the sample json for this JOBID
-OPTS="$OPTS --worker 1"  # use number of worker = 1
-OPTS="$OPTS --executor iterative --overwrite --outputdir $3"
+OPTS="$OPTS --worker 4"  # use number of worker = 1
+OPTS="$OPTS --executor futures --overwrite --outputdir $3"
 
 # Launch
 echo "Now launching: python runner.py $OPTS"
