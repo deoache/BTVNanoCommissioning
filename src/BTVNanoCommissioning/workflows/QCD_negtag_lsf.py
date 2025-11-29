@@ -147,6 +147,7 @@ class NanoProcessor(processor.ProcessorABC):
         ####################
         pruned_ev = events[event_level]
         pruned_ev["SelJet"] = event_jet[event_level]
+        pruned_ev["alljets"] = event_jet[event_level]
 
         for trigger in triggers:
             pruned_ev[trigger] = trigbools[trigger][event_level]
@@ -182,11 +183,11 @@ class NanoProcessor(processor.ProcessorABC):
                     ]
 
         if isRealData:
-            pruned_ev["SelJet", "flavor"] = ak.zeros_like(
+            pruned_ev["alljets", "flavor"] = ak.zeros_like(
                 event_jet[event_level].pt, dtype=int
             )
         else:
-            pruned_ev["SelJet", "flavor"] = flav[event_level]
+            pruned_ev["alljets", "flavor"] = flav[event_level]
 
         ####################
         #     Output       #
