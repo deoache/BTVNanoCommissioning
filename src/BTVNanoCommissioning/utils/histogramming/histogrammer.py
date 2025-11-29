@@ -168,9 +168,11 @@ def histo_writter(
             elif "qcd_jet_pt" in histname:
                 h.fill(
                     syst,
-                    flatten(pruned_ev.SelJet.flavor),
-                    flatten(pruned_ev.SelJet.pt),
-                    weight=flatten(ak.broadcast_arrays(weight, pruned_ev.SelJet.pt)[0]),
+                    flatten(pruned_ev.alljets.flavor),
+                    flatten(pruned_ev.alljets.pt),
+                    weight=flatten(
+                        ak.broadcast_arrays(weight, pruned_ev.alljets.pt)[0]
+                    ),
                 )
             elif "qcd_negtag_jet_pt" in histname:
                 for tagger, tag_obj in btag_wp_dict[f"{year}_{campaign}"].items():

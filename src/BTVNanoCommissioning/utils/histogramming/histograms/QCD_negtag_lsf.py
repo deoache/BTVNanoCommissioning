@@ -18,7 +18,7 @@ def get_histograms(axes, **kwargs):
     hists["qcd_jet_pt"] = hist.Hist(
         axes["syst"],
         axes["flav"],
-        axes["jpt"],
+        hist.axis.Regular(300, 0, 3000, name="pt", label="Inclusive Jet $p_{T}$ [GeV]"),
         hist.storage.Weight(),
     )
     for tagger, tag_obj in btag_wp_dict[f"{year}_{campaign}"].items():
@@ -29,7 +29,9 @@ def get_histograms(axes, **kwargs):
             hists[f"{key}_qcd_negtag_jet_pt"] = hist.Hist(
                 axes["syst"],
                 axes["flav"],
-                axes["jpt"],
+                hist.axis.Regular(
+                    300, 0, 3000, name="pt", label=f"{key} NegTag Jet $p_T$ [GeV]"
+                ),
                 hist.storage.Weight(),
             )
     return hists
